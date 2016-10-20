@@ -1,0 +1,9 @@
+./database/schema/adcolony_transactions.sql
+./database/schema/gl_action_history.sql
+./database/schema/gl_cached_data_types.sql
+./database/schema/gl_liked.sql
+./database/schema/gl_orders.sql
+./database/schema/gl_pub_photos.sql
+./database/schema/gl_user_cache_data.sql
+./database/schema/gl_user_sessions.sql
+./database/schema/gl_users.sql

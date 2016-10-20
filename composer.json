@@ -1,0 +1,16 @@
+{
+    "name": "songxun/likesapi",
+    "require-dev": {
+        "mgp25/instagram-php": "v1.5.0.1"
+    },
+    "authors": [
+        {
+            "name": "jinxing",
+            "email": "jin_xing@aol.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.0",
+        "usmanhalalit/pixie": "^2.0"
+    }
+}
