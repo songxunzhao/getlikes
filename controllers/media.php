@@ -73,7 +73,7 @@ class Media {
                             'is_photo' => $item->isPhoto(),
                             'is_video' => $item->isVideo(),
                             'images'   => $image_json,
-                            'caption'  => $item->getCaption(),
+                            'caption'  => InstagramJson::caption2Json($item->getCaption()),
                             'comments' => $item->getComments()
                         ]
                     ]);
