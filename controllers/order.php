@@ -45,14 +45,16 @@ class Order {
             'media_id'          => $parsed_body['media_id'],
             'user_id'           => $user->id,
             'amount'            => $parsed_body['amount'],
-            'processed_amount'  => 0,
-            'cur_coin'          => $user->coin
+            'processed_amount'  => 0
         ];
 
         QB::table('orders')->insert($data);
 
         return $res->withJson([
-            'success' => true
+            'success'   => true,
+            'data'      => [
+                'cur_coin' => $user->coin
+            ]
         ]);
     }
     public static function process( Request $req, Response $res ) {
