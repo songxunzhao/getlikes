@@ -11,6 +11,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use \InstagramAPI\Instagram;
 use App\Helpers\GLCache;
+use App\Helpers\InstagramJson;
 use App\QB;
 
 class Media {
@@ -49,32 +50,31 @@ class Media {
                 }
             }
 
-            $feed_media_list = GLCache::get_cache_data($candidate_user, 2);
-            if($feed_media_list === false)
-            {
-                $feed_media_list = [];
-                if($instagram == NULL) {
-                    $instagram = new Instagram($user->username, $user->password);
-                    $instagram->login();
-                }
-                $media = $instagram->getUserFeed($candidate_user->instagram_user_id);
-                $items = $media->getItems();
-                foreach($items as $item) {
-                    if($item->isPhoto())
-                    {
-                        $feed_media_list[] = $item->getMediaId();
-                    }
-                }
-                GLCache::cache_data($candidate_user, 2, $feed_media_list);
+
+            $feed_media_list = [];
+            if($instagram == NULL) {
+                $instagram = new Instagram($user->username, $user->password);
+                $instagram->login();
             }
-//
-            foreach($feed_media_list as $feed_media_id)
-            {
-                if(!in_array($feed_media_id, $media_ids)){
+            $media = $instagram->getUserFeed($candidate_user->instagram_user_id);
+            $items = $media->getItems();
+            foreach($items as $item) {
+                $media_id = $item->getMediaId();
+                if(!in_array($media_id, $media_ids)){
+                    $image_json = [];
+                    foreach($item->getImageVersions() as $image)
+                    {
+                        $image_json[] = InstagramJson::hdProfilePicUrlInfo2Json($image);
+                    }
                     return $res->withJson([
                         'success'   => true,
                         'data'      => [
-                            'media_id'  => $feed_media_id
+                            'media_id' => $item->getMediaId(),
+                            'is_photo' => $item->isPhoto(),
+                            'is_video' => $item->isVideo(),
+                            'images'   => $image_json,
+                            'caption'  => $item->getCaption(),
+                            'comments' => $item->getComments()
                         ]
                     ]);
                 }
