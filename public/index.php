@@ -23,6 +23,7 @@ require '../config.php';
 
 require '../helpers/random_strings.php';
 require '../helpers/glcache.php';
+require '../helpers/instagram_json.php';
 
 require '../middleware/authentication.php';
 
