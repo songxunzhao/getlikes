@@ -39,7 +39,7 @@ class Order {
         }
 
         $user->coin -= $coin_needed;
-        $user->save();
+        QB::table('user')->where('id', $user->id)->update($user);
 
         $data = [
             'media_id'          => $parsed_body['media_id'],
