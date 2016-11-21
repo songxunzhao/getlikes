@@ -39,7 +39,7 @@ class Order {
         }
 
         $user->coin -= $coin_needed;
-        QB::table('user')->where('id', $user->id)->update([
+        QB::table('users')->where('id', $user->id)->update([
             'coin' => $user->coin
         ]);
 
