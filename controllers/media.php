@@ -96,7 +96,10 @@ class Media {
         $stmt->execute([$user->id]);
         return $res->withJson([
             'success'   => true,
-            'message'   => 'Added coin'
+            'message'   => 'Added coin',
+            'data'      => [
+                'cur_coin' => $user->coin + 1
+            ]
         ]);
     }
 }

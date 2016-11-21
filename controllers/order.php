@@ -18,13 +18,6 @@ class Order {
 
         $user = $req->getAttribute('user');
         $is_private     = GLCache::get_cache_data($user, 3);
-        if($is_private === false)
-        {
-            $instagram  = new Instagram($user->username, $user->password);
-            $profile    = $instagram->getProfileData();
-            $is_private = $profile->isPrivate() ? 1 : 0;
-            GLCache::cache_data($user, 3, $is_private);
-        }
 
         if($is_private)
         {
@@ -45,11 +38,15 @@ class Order {
             ]);
         }
 
+        $user->coin -= $coin_needed;
+        $user->save();
+
         $data = [
             'media_id'          => $parsed_body['media_id'],
             'user_id'           => $user->id,
             'amount'            => $parsed_body['amount'],
-            'processed_amount'  => 0
+            'processed_amount'  => 0,
+            'cur_coin'          => $user->coin
         ];
 
         QB::table('orders')->insert($data);

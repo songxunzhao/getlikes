@@ -31,6 +31,7 @@ class Account {
             $instagram->login();
 
             $profile        = $instagram->getProfileData();
+
             $data = [
                 'username'              => $username,
                 'password'              => $password,
@@ -49,14 +50,8 @@ class Account {
             )->insert($data);
 
             $user = QB::table('users')->where('username', '=', $username)->first();
-            $order = QB::table(
-                'orders'
-            )->where(
-                'user_id', '=', $user->id
-            )->where(
-                QB::raw('amount > processed_amount')
-            )->first();
 
+            // Save session
             $token = RandomString::generate(32);
             QB::transaction(function($qb) use($user, $token){
                 //Expire all existing tokens
@@ -70,6 +65,19 @@ class Account {
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$user->id, md5($token)]);
             });
+
+            // Cache account status
+            $is_private = $profile->isPrivate() ? 1 : 0;
+            GLCache::cache_data($user, 3, $is_private);
+
+            // Check order exists
+            $order = QB::table(
+                'orders'
+            )->where(
+                'user_id', '=', $user->id
+            )->where(
+                QB::raw('amount > processed_amount')
+            )->first();
 
             $res_data = [
                 'success'   => true,
