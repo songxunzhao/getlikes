@@ -10,4 +10,5 @@ CREATE TABLE `gl_users` (
 ,   `coin`              int(11)       NOT NULL
 ,   `membership`        tinyint(4)    NOT NULL
 ,    PRIMARY KEY (`id`)
+,    UNIQUE KEY `idx_username` (`username`(255))
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
