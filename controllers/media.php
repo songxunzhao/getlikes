@@ -58,32 +58,41 @@ class Media {
             }
             $media = $instagram->getUserFeed($candidate_user->instagram_user_id);
             $items = $media->getItems();
-            foreach($items as $item) {
-                $media_id = $item->getMediaId();
-                if(!in_array($media_id, $media_ids)){
-                    $image_json = [];
-                    foreach($item->getImageVersions() as $image)
-                    {
-                        $image_json[] = InstagramJson::hdProfilePicUrlInfo2Json($image);
+
+            // Randomly select item
+            $num_items = count($items);
+            $num_try = 0;
+            if($num_items > 0) {
+                while($num_try < $num_items) {
+                    $item = $items[rand(0, $num_items - 1)];
+                    $media_id = $item->getMediaId();
+                    if(!in_array($media_id, $media_ids)){
+                        $image_json = [];
+                        foreach($item->getImageVersions() as $image)
+                        {
+                            $image_json[] = InstagramJson::hdProfilePicUrlInfo2Json($image);
+                        }
+                        return $res->withJson([
+                            'success'   => true,
+                            'data'      => [
+                                'media_id' => $item->getMediaId(),
+                                'is_photo' => $item->isPhoto(),
+                                'is_video' => $item->isVideo(),
+                                'images'   => $image_json,
+                                'caption'  => InstagramJson::caption2Json($item->getCaption()),
+                                'comments' => $item->getComments()
+                            ]
+                        ]);
                     }
-                    return $res->withJson([
-                        'success'   => true,
-                        'data'      => [
-                            'media_id' => $item->getMediaId(),
-                            'is_photo' => $item->isPhoto(),
-                            'is_video' => $item->isVideo(),
-                            'images'   => $image_json,
-                            'caption'  => InstagramJson::caption2Json($item->getCaption()),
-                            'comments' => $item->getComments()
-                        ]
-                    ]);
+                    $num_try ++;
                 }
             }
+
+            return $res->withJson([
+                'success'   => false,
+                'message'   => 'Feed was not found'
+            ]);
         }
-        return $res->withJson([
-            'success'   => false,
-            'message'   => 'Feed was not found'
-        ]);
     }
     public static function liked_one ( Request $req, Response $res ) {
 
