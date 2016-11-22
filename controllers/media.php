@@ -89,11 +89,18 @@ class Media {
 
         $user = $req->getAttribute('user');
         $parsedBody = $req->getParsedBody();
+        $media_id = $parsedBody['media_id'];
 
         $sql = 'UPDATE gl_users SET coin = coin + 1 WHERE id = ?;';
         $pdo = QB::pdo();
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$user->id]);
+
+        // Add media id into user's cache
+        $media_ids = GLCache::get_cache_data($user, 1);
+        $media_ids[] = $media_id;
+        GLCache::cache_data($user, 1, $media_ids);
+
         return $res->withJson([
             'success'   => true,
             'message'   => 'Added coin',
