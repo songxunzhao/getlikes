@@ -96,4 +96,73 @@ class Misc {
             ]);
         }
     }
+
+    public static function adcolony(Request $req, Response $res) {
+        $SECRET_KEY = "v4vc91ea018f2c674396ac";
+        $trans_id = mysql2::escape($_GET['id']);
+        $dev_id = mysql2::escape($_GET['uid']);
+        $amt = mysql2::escape($_GET['amount']);
+        $currency = mysql2::escape($_GET['currency']);
+        $open_udid = mysql2::escape($_GET['open_udid']);
+        $udid = mysql2::escape($_GET['udid']);
+        $odin1 = mysql2::escape($_GET['odin1']);
+        $mac_sha1 = mysql2::escape($_GET['mac_sha1']);
+        $custom_id = mysql2::escape($_GET['custom_id']);
+        $verifier = mysql2::escape($_GET['verifier']);
+
+        $test_string = "" . $trans_id . $dev_id . $amt . $currency . $SECRET_KEY .
+            $open_udid . $udid . $odin1 . $mac_sha1 . $custom_id;
+        $test_result = md5($test_string);
+        if($test_result != $verifier) {
+            $res->getBody()->write("vc_noreward");
+            return;
+        }
+
+
+        $username = $custom_id;
+        if($username == "")
+        {
+            $res->getBody()->write("vc_noreward");
+            return;
+        }
+        //check for a valid user
+        $user = QB::table('users')->where('username', '=', $username)->first();
+        if(!$user)
+        {
+            $res->getBody()->write("vc_noreward");
+            return;
+        }
+
+        //insert the new transaction
+
+        $insertId = QB::table('adcolony_transactions')->insert(
+            [
+                'id'        => $trans_id,
+                'amount'    => $amt,
+                'username'  => $username,
+                'time'      => date('Y-m-d H:i:s')
+            ]
+        );
+
+        $pdo = QB::pdo();
+        if(!$insertId) {
+            //check for duplicate on insertion. Transaction is valid but it is duplicated. don't process the transaction!
+
+            if($pdo->errorCode() == 1062) {
+                $res->getBody()->write('vc_success');
+                return;
+            }
+            //otherwise insert failed and AdColony should retry later
+            else {
+                $res->getBody()->write('mysql error number');
+                $res->getBody()->write("mysql error number" . $pdo->errorCode());
+                die;
+            }
+
+        }
+
+        //TODO: award the user the appropriate amount and type of currency here
+        QB::table('users')->where('id', '=', $user->id)->update(['coin' => $user->coin + $amt]);
+        echo "vc_success";
+    }
 }

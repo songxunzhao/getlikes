@@ -57,6 +57,7 @@ $container = new \Slim\Container($slim_config);
 $app = new \Slim\App($container);
 
 $app->post ( '/account/register', 'App\Controller\Account::register');
+$app->get ( '/misc/adcolony', 'App\Controller\Misc::adcolony' );
 $app->get ( '/misc/server_test', 'App\Controller\Misc::server_test' );
 
 // Authentication group
