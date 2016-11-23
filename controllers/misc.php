@@ -30,7 +30,7 @@ class Misc {
 
         $receiptData    = $parsedBody['receipt-data'];
         $mode           = $parsedBody['mode'];
-        $mode           = 1;	//Always Product mode. if set to 0, sandbox mode is activated.
+        $mode           = 0;	//Always Product mode. if set to 0, sandbox mode is activated.
 
         global $REST_RESPONSE;
         $res = $REST_RESPONSE;

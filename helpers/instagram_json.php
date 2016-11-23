@@ -26,7 +26,7 @@ class InstagramJson {
             'text'          => $obj->getText(),
             'user_id'       => $obj->getUserId()
         ];
-        
+
         return $json;
     }
 }
