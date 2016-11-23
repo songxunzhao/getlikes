@@ -21,16 +21,12 @@ class InstagramJson {
         return $json;
     }
     public static function caption2Json(Caption $obj) {
-        if($obj) {
-            $json = [
-                'content_type'  => $obj->getContentType(),
-                'text'          => $obj->getText(),
-                'user_id'       => $obj->getUserId()
-            ];
-        }
-        else{
-            $json = null;
-        }
+        $json = [
+            'content_type'  => $obj->getContentType(),
+            'text'          => $obj->getText(),
+            'user_id'       => $obj->getUserId()
+        ];
+        
         return $json;
     }
 }

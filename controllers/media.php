@@ -72,6 +72,11 @@ class Media {
                         {
                             $image_json[] = InstagramJson::hdProfilePicUrlInfo2Json($image);
                         }
+
+                        $caption = $item->getCaption();
+                        if($caption)
+                            $caption = InstagramJson::caption2Json($caption);
+
                         return $res->withJson([
                             'success'   => true,
                             'data'      => [
@@ -79,7 +84,7 @@ class Media {
                                 'is_photo' => $item->isPhoto(),
                                 'is_video' => $item->isVideo(),
                                 'images'   => $image_json,
-                                'caption'  => InstagramJson::caption2Json($item->getCaption()),
+                                'caption'  => $caption,
                                 'comments' => $item->getComments()
                             ]
                         ]);
