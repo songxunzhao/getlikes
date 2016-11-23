@@ -109,18 +109,19 @@ class Account {
         $parsed_body = $req->getParsedBody();
 
         $coin = $parsed_body['coin'];
+        $user->coin = $user->coin + $coin;
 
         $query = 'UPDATE `gl_users` SET `coin` = ? WHERE `id` = ?';
         $pdo = QB::pdo();
         $stmt = $pdo->prepare($query);
-        $stmt->execute([ $user->coin + $coin, $user->id ]);
+        $stmt->execute([ $user->coin, $user->id ]);
 
         $res_data = [
             'success' => true,
             'data' => [
                 'id'        => $user->id,
                 'username'  => $user->username,
-                'coin'      => $user->coin + 2,
+                'coin'      => $user->coin,
                 'membership'=> $user->membership
             ]
         ];
