@@ -17,15 +17,6 @@ class Order {
     public static function create( Request $req, Response $res ) {
 
         $user = $req->getAttribute('user');
-        $is_private     = GLCache::get_cache_data($user, 3);
-
-        if($is_private)
-        {
-            return $res->withJson([
-                'success' => false,
-                'message' => 'Your account is private. Please make it public'
-            ]);
-        }
 
         //TODO: Create order
         $parsed_body = $req->getParsedBody();
