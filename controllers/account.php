@@ -89,7 +89,8 @@ class Account {
                         'coin'          => $user->coin,
                         'membership'    => $user->membership
                     ],
-                    'order_exists' => $order ? true : false
+                    'order_exists' => $order ? true : false,
+                    'rated' => false
                 ],
             ];
         }
