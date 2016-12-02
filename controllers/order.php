@@ -87,7 +87,8 @@ class Order {
             ]);
         }
 
-        $num_rows = QB::table('users')->count();
+        // Find in user's location
+        $num_rows = QB::table('users')->where('location', '=', $user->location)->count();
         if($num_rows <= 1)
         {
             return $res->withJson([
@@ -99,7 +100,15 @@ class Order {
             $num_try = 2;
             while($num_try > 0) {
                 $random_offset = rand(0, $num_rows - 2);
-                $candidate_user = QB::table('users')->where('id', '!=', $user->id)->limit(1)->offset($random_offset)->first();
+                $candidate_user =
+                    QB::table(
+                        'users'
+                    )->where(
+                        'location', '=', $user->location
+                    )->where(
+                        'id', '!=', $user->id
+                    )->limit(1)->offset($random_offset)->first();
+
                 $liked_media_list = GLCache::get_cache_data($candidate_user, 1);
                 if ($liked_media_list === false) {
                     $instagram->setUser($candidate_user->username, $candidate_user->password);
@@ -134,6 +143,63 @@ class Order {
                 $num_try--;
             }
         }
+
+        // Find in whole user list
+        $num_rows = QB::table('users')->where('location', '!=', $user->location)->count();
+        if($num_rows <= 1)
+        {
+            return $res->withJson([
+                'success'   => false,
+                'message'   => "Candidate doesn't exist"
+            ]);
+        }
+        else {
+            $num_try = 2;
+            while($num_try > 0) {
+                $random_offset = rand(0, $num_rows - 1);
+                $candidate_user =
+                    QB::table(
+                        'users'
+                    )->where(
+                        'location', '!=', $user->location
+                    )->where(
+                        'id', '!=', $user->id
+                    )->limit(1)->offset($random_offset)->first();
+                $liked_media_list = GLCache::get_cache_data($candidate_user, 1);
+                if ($liked_media_list === false) {
+                    $instagram->setUser($candidate_user->username, $candidate_user->password);
+                    $instagram->login();
+                    $media = $instagram->getLikedMedia($order->media_id);
+
+                    $liked_media_list = [];
+                    if($media['status'] === 'ok') {
+                        foreach ($media['items'] as $item) {
+                            $liked_media_list[] = $item['id'];
+                        }
+                    }
+                }
+
+                if (!in_array($order->media_id, $liked_media_list)) {
+                    return $res->withJson([
+                        'success' => true,
+                        'data' => [
+                            'order' => [
+                                'id'                => $order->id,
+                                'media_id'          => $order->media_id,
+                                'amount'            => $order->amount,
+                                'processed_amount'  => $order->processed_amount
+                            ],
+                            'user' => [
+                                'username' => $candidate_user->username,
+                                'password' => $candidate_user->password
+                            ]
+                        ]
+                    ]);
+                }
+                $num_try--;
+            }
+        }
+
         return $res->withJson([
             'success'   => false,
             'message'   => 'Candidate was not found'

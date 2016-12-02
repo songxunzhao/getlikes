@@ -31,12 +31,14 @@ class Account {
             $instagram->login();
 
             $profile        = $instagram->getProfileData();
+            $country_code = geoip_country_code_by_name($req->ip());
 
             $data = [
                 'username'              => $username,
                 'password'              => $password,
                 'instagram_user_id'     => $profile->getUsernameId(),
                 'coin'                  => INIT_COIN,
+                'location'              => $country_code,
                 'membership'            => 0
             ];
 
@@ -45,7 +47,8 @@ class Account {
             )->onDuplicateKeyUpdate(
                 [
                     'instagram_user_id' => $data['instagram_user_id'],
-                    'password'          => $password
+                    'password'          => $password,
+                    'location'          => $country_code
                 ]
             )->insert($data);
 
