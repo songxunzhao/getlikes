@@ -85,8 +85,6 @@ class Account {
             $res_data = [
                 'success'   => true,
                 'token'     => $token,
-                'ip'        => $_SERVER['REMOTE_ADDR'],
-                'location'  => $country_code,
                 'data'      => [
                     'user' => [
                         'id'            => $user->id,
