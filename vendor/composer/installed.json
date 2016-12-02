@@ -397,5 +397,55 @@
             "php",
             "private"
         ]
+    },
+    {
+        "name": "akrabat/rka-ip-address-middleware",
+        "version": "0.5",
+        "version_normalized": "0.5.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/akrabat/rka-ip-address-middleware.git",
+            "reference": "832687b13bae4d7fe889fab1414aef6fafeecf80"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/akrabat/rka-ip-address-middleware/zipball/832687b13bae4d7fe889fab1414aef6fafeecf80",
+            "reference": "832687b13bae4d7fe889fab1414aef6fafeecf80",
+            "shasum": ""
+        },
+        "require": {
+            "psr/http-message": "^1.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8",
+            "squizlabs/php_codesniffer": "^2.3",
+            "zendframework/zend-diactoros": "^1.1"
+        },
+        "time": "2016-11-13T12:23:41+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "RKA\\Middleware\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Rob Allen",
+                "email": "rob@akrabat.com",
+                "homepage": "http://akrabat.com"
+            }
+        ],
+        "description": "PSR-7 Middleware that determines the client IP address and stores it as an ServerRequest attribute",
+        "homepage": "http://github.com/akrabat/rka-ip-address-middleware",
+        "keywords": [
+            "IP",
+            "middleware",
+            "psr7"
+        ]
     }
 ]
