@@ -31,7 +31,7 @@ class Account {
             $instagram->login();
 
             $profile        = $instagram->getProfileData();
-            $country_code = geoip_country_code_by_name($req->ip());
+            $country_code = geoip_country_code_by_name($req->getAttribute('ip_address'));
 
             $data = [
                 'username'              => $username,
